@@ -1,0 +1,49 @@
+/* Обложка: четыре варианта, с живыми превью */
+const items = [
+  ['v1.html', 'Вариант 1', 'Свежесть', 'Ближе всего к текущему сайту: те же шрифты и оливковый цвет, тот же порядок блоков. Чище сетка, крупнее и контрастнее текст, слайдер с понятной навигацией, все 13 брендов в ленте'],
+  ['v2.html', 'Вариант 2', 'Журнал', 'Редакционная подача: портрет Ирины в арке вместо слайдера, все три сообщения слайдера видны сразу, товары и бренды – аккуратной сеткой без каруселей, статьи – как в журнале'],
+  ['wow.html', 'WOW', 'Текстура', 'За первым экраном течёт живая кремовая текстура и реагирует на курсор. Парящая карточка с наклоном, текст проявляется по скроллу, категории с картинкой за курсором, лента новинок едет вбок'],
+  ['wow2.html', 'WOW 2', 'Шёлк', 'Тёмно-оливковый первый экран, за которым течёт живой атлас и тянется за курсором. Портрет в капсуле, картинки вырастают прямо внутри фразы, бренды сотами, категории гармошкой, карточки-стопка, ленту статей можно тянуть мышью. Дальше сайт белый']
+];
+
+module.exports = () => `<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>skincare.by – редизайн главной, 4 варианта</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..500;1,300..500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#fff;color:#20231c;font:400 15px/1.65 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:clamp(24px,5vw,72px) clamp(16px,4vw,56px)}
+a{color:inherit;text-decoration:none}
+.caps{font:500 11px/1 Manrope;letter-spacing:.2em;text-transform:uppercase;color:#4f5e48}
+h1{font:300 clamp(40px,6.500vw,104px)/1 Cormorant,serif;letter-spacing:-.02em;margin:18px 0 20px}h1 i{color:#4f5e48}
+.lead{max-width:60ch;color:#55574c;margin-bottom:clamp(32px,4vw,64px)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.c{display:flex;flex-direction:column;background:#f5f5f2;border-radius:28px;padding:14px;transition:transform .7s cubic-bezier(.16,1,.3,1),box-shadow .7s}
+.c:hover{transform:translateY(-8px);box-shadow:0 40px 70px -30px rgba(50,40,20,.35)}
+.fr{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#ecebe6}
+.fr iframe{position:absolute;left:0;top:0;width:400%;height:400%;transform:scale(.25);transform-origin:0 0;border:0;pointer-events:none}
+.bd{padding:22px 10px 12px;display:flex;flex-direction:column;gap:10px;flex:1}
+h2{font:400 clamp(30px,2.800vw,44px)/1.050 Cormorant,serif}h2 i{color:#d98a4a}
+p{color:#6d6b60}
+.go{margin-top:auto;padding-top:14px;display:inline-flex;gap:10px;align-items:center;font:500 12px/1 Manrope;letter-spacing:.14em;text-transform:uppercase}
+.go::after{content:"→";transition:transform .4s}.c:hover .go::after{transform:translateX(6px)}
+.note{margin-top:clamp(32px,4vw,56px);padding-top:22px;border-top:1px solid rgba(32,35,28,.16);color:#6d6b60;font-size:14px;max-width:90ch}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<span class="caps">skincare.by · главная страница</span>
+<h1>Лёгкий редизайн: <i>два варианта</i> и два WOW</h1>
+<p class="lead">Во всех вариантах сохранён контент живого сайта: меню, три сообщения слайдера, 13 брендов, 8 категорий, 10 новинок, блок консультации и подбора, 5 статей, реквизиты и контакты. Меняется только подача</p>
+<div class="grid">
+${items.map(([h, k, t, d]) => `  <a class="c" href="${h}"><div class="fr"><iframe src="${h}" title="" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div><div class="bd"><span class="caps">${k}</span><h2><i>${t}</i></h2><p>${d}</p><span class="go">Открыть</span></div></a>`).join('\n')}
+</div>
+<p class="note">Прототипы статичные: картинки подгружаются с живого сайта, поиск, корзина и избранное – заглушки. Внизу каждой страницы есть переключатель вариантов</p>
+</body>
+</html>
+`;

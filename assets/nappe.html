@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nappe – фон hero (GetLayers)</title>
+<!-- Градиент «Nappe» из библиотеки GetLayers (getlayers.ai/?layer=nappe). Шейдер и движение не тронуты, перекрашен только через CONFIG -->
+<style>
+  html, body { margin: 0; height: 100%; background: #efe6d8; overflow: hidden }
+  #gl { display: block; width: 100vw; height: 100vh }
+  #fade { position: fixed; inset: 0; background: #efe6d8; pointer-events: none; opacity: 1; transition: opacity 1.1s ease }
+  #ui-panel { display: none }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="fade"></div>
+<div id="ui-panel"><span id="ui-fps"></span></div>
+<script>
+/* ====== NAPPE — two poured sheets crossing the frame, and a finger that swells them ====== */
+const CONFIG = {
+  bgColor:          '#efe6d8',
+  colorA:           '#c78a5b',
+  colorB:           '#ebc7a1',
+  colorC:           '#efe2cf',
+  colorD:           '#fffaf2',
+
+  scale:            0.94,
+  speed:            0.33,      // house value — the same in every gradient
+  flow:             0.37,
+  sway:             1.05,
+  waveA:            0.56,
+  waveB:            0.18,
+  waveFreq:         1.32,
+  bandA:            0.44,
+  bandB:            0.58,
+  roll:             0.19,
+  swellField:       0.031,
+  swellFreq:        1.62,
+
+  relief:           1.18,
+  lightAngle:       3.92,
+  tone:             0.68,
+  heightTint:       -0.38,
+  contrast:         1.16,
+  gloss:            0.35,
+  glossPow:         30,
+  sink:             0.05,
+
+  grain:            0,        // off by default — house grain, turn it up to taste
+  grainAnim:        0,        // 0 static · 1 re-seeds the grain like film
+  dither:           0.82,
+  vignette:         0.08,
+  cursor:           1,        // 1 follows the hand · 0 ignores it (fully ambient)
+
+  pointerRadius:    0.66,
+  pointerSwell:     0.6,
+  pointerPress:     0.31,
+  parallax:         0.0092,
+
+  maxDpr:           1.5
+}
+
+/* ====== COLOR PRESETS — 20 per gradient, grouped. Colours only, never effect knobs. ====== */
+/* the untouched sheet sits at uTone (0.68) and the poured faces sit below it, so the body of
+   the frame is colorC→colorD and only the folds reach down into colorB, the deep creases into
+   colorA, the sinks into bgColor. A single-hue ramp therefore renders as one flat wash with
+   shapes cut out of it — the house pair has to be placed for THAT reading, not for an even
+   climb: the two accents 150–210° apart go in colorA (deep, the creases) and colorB (the
+   poured face), colorC carries the field in whichever temperature the set is named for, and
+   colorD is the off-white crest. Brightness still climbs A→B→C→D or the folds invert. */
+const PRESETS = {
+  dark: {
+    'Cobalt Ember':      { bgColor: '#05070f', colorA: '#1e3aa8', colorB: '#ff7a2c', colorC: '#e0a578', colorD: '#fff0dd' },
+    'Vermilion Sea':     { bgColor: '#04100e', colorA: '#7a1f14', colorB: '#1f9d94', colorC: '#86cfc0', colorD: '#f2fffa' },
+    'Indigo Gold':       { bgColor: '#06060f', colorA: '#3a34b8', colorB: '#e0a12e', colorC: '#f0cd7e', colorD: '#fff5db' },
+    'Fuchsia Lagoon':    { bgColor: '#0d0510', colorA: '#c41f6b', colorB: '#2ab4a4', colorC: '#8ed9c8', colorD: '#ffeef4' }
+  },
+  cool: {
+    'Cold Iris':         { bgColor: '#03060f', colorA: '#c23a1e', colorB: '#2f7ae0', colorC: '#93bcf0', colorD: '#fff1e9' },
+    'Verdigris':         { bgColor: '#03110e', colorA: '#b4441a', colorB: '#0f9aa2', colorC: '#7fd0cc', colorD: '#fff3e6' },
+    'Glacier Rose':      { bgColor: '#050d14', colorA: '#c02a4a', colorB: '#3ab4d8', colorC: '#9ed6ea', colorD: '#fff0f2' },
+    'Peacock Gold':      { bgColor: '#04090e', colorA: '#a86a10', colorB: '#1f8aa8', colorC: '#7ec4d6', colorD: '#fff6e2' }
+  },
+  warm: {
+    'Solar Cobalt':      { bgColor: '#0a0402', colorA: '#1e3fb8', colorB: '#ff6a1e', colorC: '#ffa860', colorD: '#fff0d8' },
+    'Terracotta Steel':  { bgColor: '#0c0705', colorA: '#2f6f8a', colorB: '#d4643c', colorC: '#e8a081', colorD: '#fff1e4' },
+    'Molten Brass':      { bgColor: '#090603', colorA: '#33379e', colorB: '#d9a132', colorC: '#f0cd7a', colorD: '#fff6de' },
+    'Rosewood Teal':     { bgColor: '#0a0406', colorA: '#12756e', colorB: '#d4566b', colorC: '#eda0a2', colorD: '#ffe8e2' }
+  },
+  muted: {
+    'Ash Rose':          { bgColor: '#0a0709', colorA: '#3f6982', colorB: '#c0705a', colorC: '#dda898', colorD: '#f7e6de' },
+    'Sage Plum':         { bgColor: '#0a0a0c', colorA: '#5f4382', colorB: '#93ad63', colorC: '#c9d6a6', colorD: '#f2f0e2' },
+    'Dune Slate':        { bgColor: '#0b0908', colorA: '#3e5f74', colorB: '#a58658', colorC: '#d6c295', colorD: '#f5efe0' },
+    'Fog Lilac':         { bgColor: '#0a090e', colorA: '#7d7d40', colorB: '#8d81c4', colorC: '#c8c1e2', colorD: '#f0edf6' }
+  },
+  light: {
+    'Cobalt Coral':      { bgColor: '#e8d0d8', colorA: '#2b5bff', colorB: '#ff6b5a', colorC: '#dce8ff', colorD: '#ffffff' },
+    'Porcelain Ink':     { bgColor: '#eef0f2', colorA: '#23407a', colorB: '#ff7a52', colorC: '#dfe8f2', colorD: '#fffaf6' },
+    'Almond Teal':       { bgColor: '#f2ece0', colorA: '#0f6f6a', colorB: '#e07a3c', colorC: '#ecdcc4', colorD: '#fffaf0' },
+    'Blush Ultramarine': { bgColor: '#f6ecf0', colorA: '#2f34c0', colorB: '#ff9a3d', colorC: '#ecdfee', colorD: '#fffaf2' }
+  }
+}
+
+
+/* ====== DEFAULTS + PERSISTENCE (loaded BEFORE anything is built) ====== */
+const DEFAULTS = JSON.parse(JSON.stringify(CONFIG))
+const STORAGE_KEY = 'getlayers:06-nappe'
+/* Opened on its own, this file remembers what you rolled: ⟳ reload comes back to it and
+   ↺ reset throws it away. Embedded in the gallery it must NOT — there the file is what is
+   being looked at, and a look remembered in this browser would beat the file itself: the
+   card's still would be the saved defaults while its live preview showed something else
+   entirely. Only ⤓ preview changes what this gradient is, and it changes the file. */
+const OWN_WINDOW = window.parent === window
+try { const s = OWN_WINDOW && JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); if (s) for (const k in s) if (k in CONFIG) CONFIG[k] = s[k] } catch (e) {}
+function saveConfig() { if (!OWN_WINDOW) return; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(CONFIG)) } catch (e) {} }
+
+function hexToVec3(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
+}
+
+/* ====== GL BOILERPLATE (frozen chrome — do not edit per gradient) ====== */
+const canvas = document.getElementById('gl')
+const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' })
+if (!gl) {
+  document.getElementById('fade').style.opacity = 0
+  document.getElementById('ui-panel').style.display = 'none'
+  document.body.insertAdjacentHTML('beforeend', '<p style="position:fixed;inset:0;display:grid;place-items:center;color:#889;font:13px system-ui">WebGL2 is not available in this browser.</p>')
+  throw new Error('no webgl2')
+}
+
+const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`
+
+/* ====== THE SHADER — the only part that changes between gradients ====== */
+/* NAPPE — nappage is the coat a sauce leaves on the back of a spoon: a broad flat face with a
+   rolled lip where it stops. So there is no noise anywhere in here. The height is a BAND — one
+   inside a wandering centre line, zero outside it, rolled over uRoll by a smoothstep — and its
+   gradient is written out by hand, which is what keeps the lip glass-smooth at any resolution
+   and lets the flat face be genuinely flat rather than nearly flat. Two of them cross the frame
+   from opposite edges and are joined by a+b-ab, the one union that stays differentiable, so the
+   place where they run together has no seam. The finger does not sit on top of the sheet: it is
+   added to the CENTRE LINE, so the band swells toward the hand and the swell travels along the
+   lip, and the tail pole leaves a broader, later one behind it. */
+const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;          // the head of the pointer chain, in the same space as uv
+uniform vec2  iLag;            // one follower behind it
+uniform vec2  iTail;           // and one behind that — about a second of history, no arrays
+uniform float iEnergy;         // how disturbed the sheet is: charges fast, releases over ~2 s
+uniform float iIntro;          // 0 to 1 once the pointer is first seen, so nothing pops in
+
+uniform vec3  uBgColor, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uFlow, uSway, uWaveA, uWaveB, uWaveFreq, uBandA, uBandB, uRoll, uSwellField, uSwellFreq;
+uniform float uRelief, uLightAngle, uTone, uHeightTint, uContrast, uGloss, uGlossPow, uSink;
+uniform float uGrain, uDither, uVignette;
+uniform float uPointerRadius, uPointerSwell, uPointerPress, uParallax;
+
+float hash1(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+// four overlapping stops — never butt-jointed, or the ramp shows a crease
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+
+// triangular-PDF dither — the only reliable cure for 8-bit banding
+float triDither(vec2 fc) { return (hash1(fc) + hash1(fc + 17.0) - 1.0) / 255.0; }
+
+/* a gaussian and its exact gradient in one return. Everything the sheet is made of comes
+   through here, so there is no sampled derivative anywhere in the normal. */
+vec3 gaussG(vec2 d, float r, float amp) {
+  float rr = max(1e-4, r * r);
+  float g = exp(-dot(d, d) / rr) * amp;
+  return vec3(g, -2.0 * d * g / rr);
+}
+
+/* THE BAND: one inside a centre line, zero outside, rolled over 2·roll — with its own
+   gradient, given the centre line's. The sign of (y - centre) is softened, because a hard
+   sign() would leave a crease straight down the middle of every sheet. */
+vec3 band(vec2 p, float centre, vec2 dCentre, float half_, float roll) {
+  float dy = p.y - centre;
+  float s = dy * inversesqrt(dy * dy + 1e-4);
+  float sd = abs(dy) - half_;
+  vec2 dsd = vec2(-s * dCentre.x, s * (1.0 - dCentre.y));
+  float r2 = max(1e-3, roll);
+  float u = clamp((sd + r2) / (2.0 * r2), 0.0, 1.0);
+  float a = 1.0 - u * u * (3.0 - 2.0 * u);
+  float da = -6.0 * u * (1.0 - u) / (2.0 * r2);   // zero at both clamps, so the face is flat
+  return vec3(a, da * dsd);
+}
+
+// ---- house grain. ONE look across the collection: an integer hash (no sin() streaks),
+// triangular so it reads as film rather than static, weighted into the midtones so it
+// never crusts a black or a white. Static by default; uGrainAnim re-seeds it 24×/s.
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+
+  vec2 p = (uv - iMouse * uParallax) * uScale;
+  vec2 ml = (iLag  - iMouse * uParallax) * uScale;
+  vec2 mt = (iTail - iMouse * uParallax) * uScale;
+  float rp = uPointerRadius * uScale;
+
+  /* the hand, as two lagged swells — tight and current at the lag pole, broad and late at the
+     tail. Both are added to the CENTRE LINE below, not to the surface, so the sheet bulges
+     sideways where the finger passes instead of a blister rising out of it. */
+  float charge = (0.35 + 0.65 * iEnergy) * iIntro;
+  vec3 sw = gaussG(p - ml, rp, uPointerSwell * charge)
+          + gaussG(p - mt, rp * 1.7, uPointerSwell * 0.55 * charge);
+
+  // sheet one, entering from the top
+  float ph = p.x * uWaveFreq + t * uFlow;
+  float c1 = uSway + uWaveA * sin(ph) + uWaveB * sin(ph * 0.53 - t * uFlow * 1.7) + sw.x;
+  vec2 dc1 = vec2(uWaveA * uWaveFreq * cos(ph)
+                + uWaveB * uWaveFreq * 0.53 * cos(ph * 0.53 - t * uFlow * 1.7), 0.0) + sw.yz;
+  vec3 A = band(p, c1, dc1, uBandA, uRoll);
+
+  // sheet two, from the bottom, slower and a little wider in the lip
+  float ph2 = p.x * uWaveFreq * 0.71 - t * uFlow * 0.8 + 2.1;
+  float c2 = -uSway * 1.04 + uWaveA * 0.82 * sin(ph2) - uWaveB * 0.5 * sin(ph2 * 1.7 + t * uFlow * 0.5) + sw.x * 0.7;
+  vec2 dc2 = vec2(uWaveA * 0.82 * uWaveFreq * 0.71 * cos(ph2)
+                - uWaveB * 0.5 * uWaveFreq * 0.71 * 1.7 * cos(ph2 * 1.7 + t * uFlow * 0.5), 0.0) + sw.yz * 0.7;
+  vec3 B = band(p, c2, dc2, uBandB, uRoll * 1.35);
+
+  // a + b - ab: the union that stays differentiable, so where they run together there is no seam
+  float h = A.x + B.x - A.x * B.x;
+  vec2  dh = A.yz * (1.0 - B.x) + B.yz * (1.0 - A.x);
+
+  // the faces are perfectly flat, which reads as printed rather than poured — so a very slow,
+  // very shallow swell is laid over everything, again with its gradient written out
+  float qa = p.x * uSwellFreq + t * 0.40, qb = p.y * uSwellFreq * 0.83 - t * 0.31;
+  h += (sin(qa) + sin(qb)) * uSwellField;
+  dh.x += cos(qa) * uSwellFreq * uSwellField;
+  dh.y += cos(qb) * uSwellFreq * 0.83 * uSwellField;
+
+  // and the fingertip presses a shallow dimple into whatever is under it
+  vec3 pr = gaussG(p - ml, rp * 0.72, -uPointerPress * iIntro);
+  h += pr.x; dh += pr.yz;
+
+  vec3 n = normalize(vec3(-dh * uRelief, 1.0));
+  vec3 L = normalize(vec3(cos(uLightAngle), sin(uLightAngle), 0.9));
+  // centred on the flat response — an untouched sheet sits exactly at uTone
+  float dif = clamp(0.5 + (dot(n, L) - L.z) * 1.5, 0.0, 1.0);
+  float spec = pow(clamp(dot(reflect(-L, n), vec3(0.0, 0.0, 1.0)), 0.0, 1.0), uGlossPow);
+
+  float f = clamp(uTone + (dif - 0.5) * uContrast + h * uHeightTint, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGloss * spec;
+  col = mix(uBgColor, col, smoothstep(0.0, max(0.01, uSink), f) * 0.9 + 0.1);
+
+  col *= 1.0 - uVignette * dot(uv, uv);
+  // grain is STATIC per pixel: reseeding it on a clock puts a 1/255 shimmer into every idle frame
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`
+
+function compile(type, src) {
+  const sh = gl.createShader(type)
+  gl.shaderSource(sh, src)
+  gl.compileShader(sh)
+  if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh))
+  return sh
+}
+
+const program = gl.createProgram()
+gl.attachShader(program, compile(gl.VERTEX_SHADER, VERT))
+gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAG))
+gl.linkProgram(program)
+if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program))
+gl.useProgram(program)
+gl.bindVertexArray(gl.createVertexArray())
+
+const LOC = {}
+const loc = n => (n in LOC ? LOC[n] : (LOC[n] = gl.getUniformLocation(program, n)))
+const u1f = (n, v) => gl.uniform1f(loc(n), v)
+const u2f = (n, x, y) => gl.uniform2f(loc(n), x, y)
+const u3c = (n, hex) => { const c = hexToVec3(hex); gl.uniform3f(loc(n), c[0], c[1], c[2]) }
+
+/* ====== CONFIG → UNIFORMS ====== */
+/* One pass over CONFIG: 'foo' becomes uFoo, colours as vec3 and everything else as float.
+   maxDpr is the one key that is a renderer setting rather than a shader input. */
+function applyConfig() {
+  gl.useProgram(program)
+  for (const k in CONFIG) {
+    if (k === 'maxDpr') continue
+    const n = 'u' + k[0].toUpperCase() + k.slice(1)
+    if (typeof CONFIG[k] === 'string') u3c(n, CONFIG[k]); else u1f(n, CONFIG[k])
+  }
+  resize()
+}
+
+/* ====== RESIZE ====== */
+let dpr = 1
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr)
+  const w = Math.max(1, Math.round(innerWidth * dpr))
+  const h = Math.max(1, Math.round(innerHeight * dpr))
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h }
+  gl.viewport(0, 0, w, h)
+  gl.useProgram(program)
+  u2f('iResolution', w, h)
+}
+/* Coalesced to one resize per frame: a window drag fires far faster than the display
+   refreshes, and every raw call reallocates the drawing buffer. */
+let resizeQueued = false
+addEventListener('resize', () => {
+  if (resizeQueued) return
+  resizeQueued = true
+  requestAnimationFrame(() => { resizeQueued = false; resize() })
+}, { passive: true })
+
+/* ====== POINTER (nine scalars — the only per-frame CPU maths allowed) ====== */
+const P = { tx: 0, ty: 0, hx: 0, hy: 0, mx: 0, my: 0, sx: 0, sy: 0, e: 0 }
+let seeded = false
+/* One handler for both events, and it does exactly one job: write the target. Everything
+   that moves is integrated in the render loop, so a flick that fires forty events inside a
+   single frame costs the same as one that fires one. */
+const aim = e => {
+  const a = innerWidth / innerHeight
+  P.tx = (e.clientX / innerWidth - 0.5) * a
+  P.ty = (0.5 - e.clientY / innerHeight)
+  if (!seeded) {                                   // first sighting: start there, never fly across
+    seeded = true
+    P.hx = P.mx = P.sx = P.tx
+    P.hy = P.my = P.sy = P.ty
+  }
+}
+addEventListener('pointermove', aim, { passive: true })
+addEventListener('pointerdown', aim, { passive: true })
+
+/* ====== RENDER LOOP ====== */
+const fadeEl = document.getElementById('fade')
+const fpsEl = document.getElementById('ui-fps')
+
+let visible = true
+new IntersectionObserver(es => { visible = es[0].isIntersecting }, { threshold: 0 }).observe(canvas)
+
+let prevT = performance.now(), clock = 0, intro = 0, fpsT = prevT, fpsN = 0
+function frame(now) {
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches || clock === 0) requestAnimationFrame(frame)
+
+  /* PACING — one clamped interval drives everything below it. Every smoothing term is
+     1 - e^(-rate·dt) rather than a fixed per-frame fraction, so the trail has the identical
+     curve at 60, 120 or 144 Hz instead of a chase that doubles when the monitor does. The
+     shader clock is accumulated from the same clamped interval instead of read off the wall:
+     rAF stops in a background tab but wall time does not, and handing the shader that gap is
+     exactly what makes a field lurch on the way back. */
+  const raw = now - prevT
+  prevT = now
+  if (!visible || document.hidden) return
+  const dt = raw > 50 ? 0.05 : raw < 4.167 ? 0.004167 : raw * 0.001
+  clock += dt
+
+  const kh = 1 - Math.exp(-5.6 * dt)               // head: still perceptibly behind the cursor
+  const km = 1 - Math.exp(-2.4 * dt)               // middle of the trail
+  const ks = 1 - Math.exp(-1.15 * dt)              // tail: about a second of memory
+  P.hx += (P.tx - P.hx) * kh; P.hy += (P.ty - P.hy) * kh
+  P.mx += (P.hx - P.mx) * km; P.my += (P.hy - P.my) * km
+  P.sx += (P.mx - P.sx) * ks; P.sy += (P.my - P.sy) * ks
+
+  /* How far the head runs ahead of the tail IS the stroke — already filtered, unlike a
+     per-frame velocity. It charges quickly and releases slowly, so a flick sets the surface
+     going and a resting cursor lets it settle. */
+  const ex = P.hx - P.sx, ey = P.hy - P.sy
+  const want = Math.min(Math.sqrt(ex * ex + ey * ey) * 5.5, 1)
+  P.e += (want - P.e) * (1 - Math.exp(-(want > P.e ? 4.5 : 0.42) * dt))
+  intro += ((seeded ? 1 : 0) - intro) * (1 - Math.exp(-3.0 * dt))
+
+  u1f('iTime', clock)
+  /* cursor 0: the hand is ignored and the pointer eases back to where it rested — the
+     gradient goes fully ambient. Nothing else changes, so it can be flipped live. */
+  if (P.rest === undefined) P.rest = { x: P.tx, y: P.ty }
+  if (!CONFIG.cursor) { P.tx = P.rest.x; P.ty = P.rest.y }
+
+  u1f('iIntro', intro)
+  u1f('iEnergy', P.e)
+  u2f('iMouse', P.hx, P.hy)
+  u2f('iLag', P.mx, P.my)
+  u2f('iTail', P.sx, P.sy)
+  gl.drawArrays(gl.TRIANGLES, 0, 3)
+
+  fpsN++
+  if (now - fpsT > 500) {
+    fpsEl.textContent = Math.round(fpsN * 1000 / (now - fpsT)) + ' fps · ' + dpr.toFixed(1) + '×'
+    fpsT = now; fpsN = 0
+  }
+}
+
+applyConfig()
+gl.drawArrays(gl.TRIANGLES, 0, 3)        // one draw before the reveal, so we never fade onto a blank canvas
+fadeEl.style.opacity = 0
+requestAnimationFrame(frame)
+</script>
+</body>
+</html>

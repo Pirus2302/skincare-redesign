@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>skincare.by – вариант WOW 2 «Шёлк»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Forum&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--deep:#1f261c;--olive:#4f5e48;--sage:#dfe5d0;--mist:#f4f5f0;--ink:#1d211a;--mute:#6b6f62;--gold:#c9a673;--line:rgba(29,33,26,.14);--e:cubic-bezier(.16,1,.3,1);--pad:clamp(16px,3.400vw,52px)}
+*{box-sizing:border-box;margin:0}
+html{background:#fff}
+body{background:#fff;color:var(--ink);font:400 16px/1.650 Jost,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body.lock{overflow:hidden}
+img{display:block;max-width:100%}a{color:inherit;text-decoration:none}ul{list-style:none;padding:0}button{font:inherit;color:inherit}
+h1,h2,h3,.serif{font-family:Forum,Georgia,serif;font-weight:400;line-height:1.060;letter-spacing:-.005em}
+.caps{font:500 11.500px/1 Jost,sans-serif;letter-spacing:.22em;text-transform:uppercase}
+.px{padding-inline:var(--pad)}
+.btn{position:relative;display:inline-flex;align-items:center;gap:12px;padding:19px 32px;border-radius:999px;background:var(--ink);color:#fff;font:500 12px/1 Jost;letter-spacing:.16em;text-transform:uppercase;overflow:hidden;isolation:isolate;transition:color .45s var(--e);will-change:transform}
+.btn::before{content:"";position:absolute;left:50%;top:50%;z-index:-1;width:130%;aspect-ratio:1;border-radius:50%;background:var(--gold);transform:translate(-50%,-50%) scale(0);transition:transform .7s var(--e)}
+.btn:hover{color:var(--ink)}.btn:hover::before{transform:translate(-50%,-50%) scale(1)}
+.btn.light{background:#fff;color:var(--ink)}
+.btn.line{background:transparent;box-shadow:0 0 0 1px rgba(255,255,255,.55) inset;color:#fff}.btn.line:hover{color:var(--ink)}
+.btn svg{transition:transform .45s var(--e)}.btn:hover svg{transform:translateX(5px)}
+
+/* лоадер: две половины занавеса разъезжаются в стороны */
+.lo{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;pointer-events:none}
+.lo i{position:absolute;top:0;bottom:0;width:50.5%;background:var(--deep);transition:transform 1.250s cubic-bezier(.76,0,.24,1)}
+.lo i:first-child{left:0}.lo i:nth-child(2){right:0}
+.lo .m{position:relative;display:flex;color:var(--sage);font:400 clamp(34px,5.400vw,84px)/1 Forum,serif;letter-spacing:.08em;text-transform:uppercase;transition:opacity .5s,letter-spacing 1.200s var(--e)}
+.lo .m b{font-weight:400;opacity:0;transform:translateY(.4em);animation:ltr .9s var(--e) forwards;animation-delay:calc(var(--i)*55ms + 120ms)}
+.lo .ln{position:absolute;left:50%;top:calc(50% + clamp(38px,4.600vw,70px));width:min(240px,50vw);height:1px;margin-left:calc(min(240px,50vw)/-2);background:rgba(223,229,208,.2)}
+.lo .ln::after{content:"";position:absolute;inset:0;background:var(--gold);transform-origin:left;transform:scaleX(0);animation:fill 1.300s cubic-bezier(.65,0,.35,1) forwards}
+.ready .lo i:first-child{transform:translateX(-101%)}.ready .lo i:nth-child(2){transform:translateX(101%)}
+.ready .lo .m{opacity:0;letter-spacing:.4em}.ready .lo .ln{opacity:0;transition:opacity .3s}
+@keyframes ltr{to{opacity:1;transform:none}}@keyframes fill{to{transform:scaleX(1)}}
+
+/* курсор-кольцо */
+.cur{position:fixed;left:0;top:0;z-index:9998;pointer-events:none;display:grid;place-items:center;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:1.400px solid #fff;color:#fff;mix-blend-mode:difference;opacity:0;transition:width .45s var(--e),height .45s var(--e),margin .45s var(--e),border-color .3s,opacity .3s}
+.cur::after{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;transition:transform .45s var(--e),opacity .3s}
+.cur.big{width:74px;height:74px;margin:-37px 0 0 -37px;border-color:rgba(255,255,255,.75)}
+.cur.big::after{transform:scale(2.600);opacity:.22}
+@media(hover:none),(pointer:coarse){.cur{display:none}}
+
+/* шапка: на первом экране прозрачная и белая, дальше – белая плашка */
+.hdr{position:fixed;inset:0 0 auto;z-index:60;padding:16px var(--pad);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;color:#fff;transition:transform .6s var(--e),background .4s,color .4s,box-shadow .4s}
+.hdr.hide{transform:translateY(-110%)}
+.hdr.solid{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.logo img{height:28px;width:auto;filter:brightness(0) invert(1);transition:filter .4s}.solid .logo img{filter:none}
+.menu{display:flex;gap:clamp(12px,2vw,30px)}
+.menu>li{position:relative}
+.menu>li>a{position:relative;display:inline-flex;align-items:center;gap:7px;padding:12px 0;font:500 12px/1 Jost;letter-spacing:.16em;text-transform:uppercase}
+.menu>li>a::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .5s var(--e)}
+.menu>li:hover>a::after{transform:none;transform-origin:left}
+.menu i{width:5px;height:5px;border-right:1.5px solid;border-bottom:1.5px solid;transform:rotate(45deg) translateY(-2px)}
+.sub{position:absolute;top:100%;left:50%;min-width:240px;padding:18px 26px;border-radius:18px;background:#fff;color:var(--ink);box-shadow:0 30px 70px rgba(20,30,15,.18),0 0 0 1px var(--line);opacity:0;visibility:hidden;transform:translate(-50%,10px);transition:.35s var(--e)}
+.sub-wide{columns:2;column-gap:34px;min-width:540px}
+.has-sub:hover .sub,.has-sub:focus-within .sub{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.sub a{display:block;padding:7px 0;font-size:15px;color:var(--mute);break-inside:avoid;transition:color .2s,transform .3s var(--e)}.sub a:hover{color:var(--ink);transform:translateX(4px)}
+.tools{display:flex;gap:4px;justify-content:flex-end;align-items:center}
+.tools a,.tools button{position:relative;width:42px;height:42px;border-radius:50%;border:0;background:none;cursor:pointer;display:grid;place-items:center;transition:background .3s,color .3s}
+.tools a:hover,.tools button:hover{background:var(--gold);color:var(--ink)}
+.tools b{position:absolute;top:1px;right:1px;min-width:16px;height:16px;border-radius:8px;background:var(--gold);color:var(--ink);font:500 10px/16px Jost;text-align:center}
+.tools .burger{display:none}
+
+/* первый экран */
+.hero{position:relative;min-height:100svh;background:var(--deep);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:104px var(--pad) 28px;overflow:hidden}
+.hero iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transition:opacity 1.800s ease .2s}.ready .hero iframe{opacity:1}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(31,38,28,.72),rgba(31,38,28,.25) 55%,rgba(31,38,28,0) 75%),linear-gradient(0deg,rgba(31,38,28,.6),rgba(31,38,28,0) 30%);pointer-events:none}
+.hero>*:not(iframe){position:relative;z-index:2}
+.h-top{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;color:rgba(255,255,255,.78);font-size:14px}
+.h-top .c{display:flex;gap:8px 22px;flex-wrap:wrap}.h-top a{display:inline-flex;gap:7px;align-items:center;transition:color .2s}.h-top a:hover{color:var(--gold)}
+.h-top .who{color:var(--sage)}
+.h-mid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,4vw,72px);align-items:center}
+.hero h1{font-size:clamp(30px,5.500vw,102px);text-transform:uppercase;letter-spacing:.01em;line-height:1.040}
+.l{display:block;overflow:hidden;padding-bottom:.08em}
+.l>span{display:block;transform:translateY(110%) rotate(3deg);transform-origin:0 100%;transition:transform 1.300s var(--e)}
+.ready .l>span{transform:none}
+.l:nth-child(2)>span{transition-delay:.12s;color:var(--gold)}.l:nth-child(3)>span{transition-delay:.24s}
+.lead{max-width:50ch;margin-top:clamp(20px,2.400vw,36px);color:rgba(255,255,255,.86);font-size:clamp(15px,1.150vw,18px);font-weight:300}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(22px,2.400vw,36px)}
+/* портрет в капсуле: раскрывается снизу вверх, фото внутри чуть плывёт за курсором */
+.lens{position:relative;width:min(25vw,390px);aspect-ratio:3/4.300;margin-right:clamp(0px,3vw,56px)}
+.lens::before{content:"";position:absolute;inset:-16px;border-radius:999px;border:1px solid rgba(255,255,255,.4);opacity:0;scale:.92;transition:opacity 1.400s var(--e) .9s,scale 1.400s var(--e) .9s}
+.ready .lens::before{opacity:1;scale:1}
+.lens .in{width:100%;height:100%;border-radius:999px;overflow:hidden;clip-path:inset(100% 0 0 0 round 999px);transition:clip-path 1.600s var(--e) .35s}
+.ready .lens .in{clip-path:inset(0 0 0 0 round 999px)}
+.lens img{width:100%;height:100%;object-fit:cover;object-position:82% center;scale:1.16;will-change:transform}
+.lens .tag{position:absolute;left:0;right:0;bottom:-13px;width:max-content;margin:0 auto;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);white-space:nowrap}
+.strip{display:grid;grid-template-columns:auto 1fr auto;gap:12px 28px;align-items:center;padding:16px 16px 16px 26px;border-radius:999px;background:rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:0 0 0 1px rgba(255,255,255,.22) inset}
+.strip strong{font:400 clamp(18px,1.600vw,24px)/1.200 Forum,serif;display:flex;gap:12px;align-items:center}.strip strong::before{content:"✦";color:var(--gold)}
+.strip span{color:rgba(255,255,255,.78);font-weight:300}
+.strip a{display:inline-flex;gap:10px;align-items:center;padding:13px 22px;border-radius:999px;background:#fff;color:var(--ink);transition:background .3s}.strip a:hover{background:var(--gold)}
+.fade{opacity:0;transform:translateY(20px);transition:opacity 1.100s var(--e),transform 1.100s var(--e)}
+.ready .fade{opacity:1;transform:none}
+.d1{transition-delay:.45s}.d2{transition-delay:.58s}.d3{transition-delay:.75s}.d4{transition-delay:.95s}
+
+section{padding:clamp(72px,8.500vw,140px) 0}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,64px)}
+.sh h2{font-size:clamp(38px,5.200vw,92px);text-transform:uppercase}
+.sh h2 em{font-style:normal;color:var(--olive)}
+.sh .caps{display:inline-flex;gap:10px;align-items:center;color:var(--mute)}.sh a.caps:hover{color:var(--ink)}
+
+/* фраза со вторым слайдом: картинки-капсулы вырастают прямо внутри строки, слова темнеют по скроллу */
+.say{text-align:center;--p:0}
+.say h2{font-size:clamp(32px,5.400vw,98px);line-height:1.140;max-width:16em;margin:0 auto clamp(30px,3vw,48px)}
+.say .w{color:#c9ccc0;transition:color .6s}.say .w.on{color:var(--ink)}
+.cap{display:inline-block;height:.760em;width:calc(var(--p)*1.950em);margin:0 calc(var(--p)*.1em);border-radius:999px;overflow:hidden;vertical-align:-.060em}
+.cap img{width:100%;height:100%;object-fit:cover;filter:contrast(1.08) saturate(1.15)}
+.cap.b img{object-position:50% 30%}
+
+/* бренды: круглые соты по центру, знаки выровнены по оптическому центру (--k, --x, --y из data.js) */
+.hive{--u:clamp(70px,7.600vw,112px);display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,1.300vw,20px);max-width:calc(var(--u)*1.450*7 + 20px*6 + 2px);margin:0 auto}
+.hive a{position:relative;width:calc(var(--u)*1.450);aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--mist);opacity:0;scale:.6;transition:opacity .9s var(--e),scale 1.100s var(--e),background .4s,box-shadow .5s;transition-delay:calc(var(--i)*55ms),calc(var(--i)*55ms),0s,0s}
+.hive.in a{opacity:1;scale:1}
+.hive.in a:hover{scale:1.100;background:#fff;box-shadow:0 0 0 1px var(--line),0 26px 50px -22px rgba(30,40,20,.4);transition-delay:0s}
+.hive img{position:absolute;left:50%;top:50%;transform:translate(var(--x),var(--y));width:calc(var(--u)*var(--k));max-width:none;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply}
+
+/* категории: гармошка – активная панель раскрывается, у остальных название стоит вертикально */
+.acc{display:flex;gap:10px;height:min(72vh,640px)}
+.ap{position:relative;flex:1 1 0;min-width:0;border-radius:26px;overflow:hidden;color:#fff;transition:flex-grow .9s var(--e)}
+.ap.on{flex-grow:4.400}
+.ap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;scale:1.08;transition:scale 1.400s var(--e),filter .8s}
+.ap:not(.on) img{filter:saturate(.75) brightness(.82)}
+.ap.on img{scale:1}
+.ap::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,26,18,.78),rgba(20,26,18,.05) 55%)}
+.ap .n{position:absolute;left:22px;top:20px;z-index:2;font:400 20px/1 Forum,serif;color:var(--sage)}
+.ap .ar{position:absolute;right:18px;top:16px;z-index:2;width:48px;height:48px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;opacity:0;scale:.5;rotate:-45deg;transition:.6s var(--e)}
+.ap.on .ar{opacity:1;scale:1}
+.ai{position:absolute;left:22px;right:22px;bottom:22px;z-index:2}
+.ai h3{font-size:clamp(22px,2.100vw,32px);white-space:nowrap;transform-origin:0 100%;transform:translateX(1.050em) rotate(-90deg);transition:transform .9s var(--e)}
+.ap.on h3{transform:none}
+.ai p{max-height:0;opacity:0;overflow:hidden;color:rgba(255,255,255,.82);font-weight:300;max-width:40ch;transition:max-height .7s var(--e),opacity .5s,margin .7s var(--e)}
+.ap.on .ai p:not(:empty){max-height:90px;opacity:1;margin-top:8px;transition-delay:.15s}
+
+/* новинки: пять колонок, чётные стоят ниже и догоняют остальные при прокрутке */
+.new{background:var(--mist);border-radius:clamp(24px,4vw,56px);margin:0 clamp(0px,1vw,14px)}
+.pcols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;align-items:start;margin-bottom:-70px}
+.pcol{display:grid;gap:18px;will-change:transform}
+.pcol:nth-child(even){margin-top:90px}
+.pc{display:flex;flex-direction:column;background:#fff;border-radius:24px;padding:12px;transition:transform .7s var(--e),box-shadow .7s}
+.pc:hover{transform:translateY(-8px);box-shadow:0 36px 60px -30px rgba(30,40,20,.35)}
+.pc .ph{aspect-ratio:1;border-radius:16px;display:grid;place-items:center;padding:18px;overflow:hidden}
+.pc img{max-height:100%;object-fit:contain;mix-blend-mode:multiply;transition:transform 1s var(--e)}
+.pc:hover img{transform:scale(1.1)}
+.pc h3{font:400 15px/1.450 Jost,sans-serif;letter-spacing:0;margin:12px 8px 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:65px}
+.pf{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:auto 4px 4px 8px;padding-top:14px}
+.pr{font:400 25px/1 Forum,serif;white-space:nowrap}.pr.ask{font:400 13.500px/1.200 Jost;color:var(--mute);white-space:normal}
+.go{display:inline-flex;align-items:center;height:44px;padding:0 12px;border-radius:999px;background:var(--ink);color:#fff;font:500 11px/1 Jost;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;transition:background .3s,color .3s}
+.go span{max-width:0;overflow:hidden;transition:max-width .6s var(--e),margin .6s var(--e)}
+.pc:hover .go span{max-width:96px;margin-left:8px}
+.go:hover{background:var(--gold);color:var(--ink)}
+@media(hover:none){.go span{max-width:96px;margin-left:8px}}
+
+/* консультация и подбор: карточки-стопка, вторая наезжает на первую */
+.stack{display:grid;gap:24px}
+.sc{position:sticky;top:88px;display:grid;grid-template-columns:1fr 1fr;height:min(74vh,620px);border-radius:clamp(24px,3vw,44px);overflow:hidden;transform-origin:50% 0;will-change:transform}
+.sc:nth-child(1){background:var(--deep);color:#fff}
+.sc:nth-child(2){background:var(--sage);top:112px}.sc:nth-child(2) .im{order:-1}
+.sc .tx{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:28px;padding:clamp(24px,3.600vw,60px)}
+.sc h3{font-size:clamp(32px,4.200vw,74px);text-transform:uppercase;max-width:9em}
+.sc .caps{opacity:.7}
+.sc .im{overflow:hidden}.sc .im img{width:100%;height:100%;object-fit:cover;filter:contrast(1.18) saturate(1.25) brightness(.9);transition:transform 1.600s var(--e)}.sc:hover .im img{transform:scale(1.05)}
+
+/* статьи: лента, которую можно тянуть мышью */
+.jr{display:flex;gap:22px;overflow-x:auto;padding:0 var(--pad) 8px;scrollbar-width:none;cursor:grab}
+.jr::-webkit-scrollbar{display:none}
+.jr.drag{cursor:grabbing}.jr.drag a{pointer-events:none}
+.jp{flex:none;width:clamp(270px,27vw,410px);user-select:none}
+.jp:nth-child(even){margin-top:56px}
+.jp .ph{aspect-ratio:4/5;border-radius:22px;overflow:hidden}.jp:nth-child(even) .ph{aspect-ratio:1}
+.jp img{width:100%;height:100%;object-fit:cover;transition:transform 1.400s var(--e);-webkit-user-drag:none}
+.jp:hover img{transform:scale(1.06)}
+.jp time{display:block;margin:18px 0 8px;color:var(--olive)}
+.jp h3{font-size:clamp(22px,1.900vw,30px);margin-bottom:8px}
+.jp p{color:var(--mute);font-weight:300;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nav2{display:flex;gap:8px}.nav2 button{width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;transition:.3s}.nav2 button:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+@media(hover:none){.jr{scroll-snap-type:x mandatory}.jp{scroll-snap-align:center}}
+
+/* подвал */
+footer{background:var(--deep);color:#c6ccb9;border-radius:clamp(24px,4vw,56px) clamp(24px,4vw,56px) 0 0;padding:clamp(48px,5.500vw,88px) 0 84px;font-size:15px;font-weight:300}
+.ftop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;padding-bottom:clamp(36px,4vw,64px);margin-bottom:clamp(36px,4vw,64px);border-bottom:1px solid rgba(223,229,208,.16)}
+.ftop .caps{color:var(--gold);display:block;margin-bottom:18px}
+.tel{display:inline-block;font:400 clamp(38px,8vw,148px)/1 Forum,serif;color:#fff;letter-spacing:.01em;transition:color .4s}.tel:hover{color:var(--gold)}
+.ftop ul{display:grid;gap:8px;justify-items:end;text-align:right}.ftop li a:hover{color:#fff}
+.soc{display:flex;gap:10px;margin-bottom:10px}.soc a{width:48px;height:48px;border-radius:50%;border:1px solid rgba(223,229,208,.28);display:grid;place-items:center;color:#fff;transition:.35s var(--e)}.soc a:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translateY(-4px)}
+.fg{display:grid;grid-template-columns:1.500fr 1fr 1.500fr;gap:48px}
+.fg p{margin-bottom:10px}
+.fg h4{color:#fff;margin-bottom:22px}
+.fg li{margin-bottom:9px}.fg li a{transition:color .2s}.fg li a:hover{color:var(--gold)}
+.fg .two{columns:2;column-gap:24px}
+.fbot{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;margin-top:48px;padding-top:22px;border-top:1px solid rgba(223,229,208,.16)}
+.pay{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.pay img{height:26px;width:auto}.pay .strip2{height:20px;max-width:100%;object-fit:contain;opacity:.85}
+.dev{display:flex;gap:12px;align-items:center;font-size:14px}.dev img{height:22px}
+
+.rv{opacity:0;transform:translateY(40px);transition:opacity 1.200s var(--e),transform 1.200s var(--e)}.rv.in{opacity:1;transform:none}
+
+@media(max-width:1180px){.menu{gap:14px}.menu>li>a{letter-spacing:.08em}.pcols{grid-template-columns:repeat(4,minmax(0,1fr))}.pcol:nth-child(5){display:contents}}
+@media(max-width:1180px) and (min-width:861px){.pcol:nth-child(5) .pc{grid-column:span 2}}
+@media(max-width:860px){
+ .hdr{grid-template-columns:auto 1fr}.tools .burger{display:grid}.tools .opt{display:none}
+ .menu{display:none;position:absolute;top:100%;left:var(--pad);right:var(--pad);flex-direction:column;gap:0;border-radius:22px;padding:10px 20px;max-height:72vh;overflow:auto;background:#fff;color:var(--ink);box-shadow:0 30px 70px rgba(20,30,15,.25)}
+ .menu.open{display:flex}.menu>li>a{padding:14px 0}.menu>li>a::after{display:none}
+ .sub,.sub-wide{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;padding:0 0 8px 14px;min-width:0;columns:1}
+ .hero{padding-top:88px}.hero::after{background:linear-gradient(0deg,rgba(31,38,28,.7),rgba(31,38,28,.35))}
+ .h-mid{grid-template-columns:1fr}.lens{width:min(62vw,300px);margin:8px auto 22px;order:2}
+ .strip{grid-template-columns:1fr;border-radius:26px;padding:20px;justify-items:start}
+ .acc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));height:auto}.ap,.ap.on{aspect-ratio:3/4;flex:none}.ap img,.ap:not(.on) img{filter:none;scale:1}
+ .ai{left:14px;right:14px;bottom:14px}.ai h3{transform:none;white-space:normal;font-size:20px}.ai p,.ap .ar{display:none}.ap .n{left:14px;top:12px}
+ .new{margin:0}.pcols{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:0}.pcol{display:contents}.pcol:nth-child(even){margin-top:0}
+ .pc{padding:8px;border-radius:18px}.pc .ph{padding:10px}.pf{flex-direction:column;align-items:flex-start;margin:auto 4px 4px}.pr{font-size:22px}.go{height:40px}
+ .sc{position:static;grid-template-columns:1fr;height:auto;transform:none!important}.sc .im{order:-1;aspect-ratio:4/3}.sc .tx{gap:22px}
+ .jp{width:74vw}.jp:nth-child(even){margin-top:0}.jp .ph,.jp:nth-child(even) .ph{aspect-ratio:4/3}.nav2{display:none}
+ .ftop{grid-template-columns:1fr}.ftop ul{justify-items:start;text-align:left}.fg{grid-template-columns:1fr;gap:34px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv,.fade,.l>span,.hive a{opacity:1!important;transform:none!important;scale:1!important}.lens .in{clip-path:none}.lo{display:none}.say{--p:1!important}.say .w{color:var(--ink)}.hero iframe{opacity:1}.pcol:nth-child(even){margin-top:0}}
+</style>
+</head>
+<body class="lock">
+
+<div class="lo" aria-hidden="true"><i></i><i></i><div class="m"><b style="--i:0">s</b><b style="--i:1">k</b><b style="--i:2">i</b><b style="--i:3">n</b><b style="--i:4">c</b><b style="--i:5">a</b><b style="--i:6">r</b><b style="--i:7">e</b><b style="--i:8">.</b><b style="--i:9">b</b><b style="--i:10">y</b></div><span class="ln"></span></div>
+<div class="cur" id="cur"></div>
+
+<header class="hdr" id="hdr">
+  <a class="logo" href="https://skincare.by/"><img src="https://skincare.by/wp-content/uploads/2026/04/logo.png" alt="skincare.by" width="402" height="78"></a>
+  <ul class="menu" id="menu"><li><a href="https://skincare.by/">Главная</a></li><li class="has-sub"><a href="https://skincare.by/katalog/">Каталог<i></i></a><ul class="sub sub-wide"><li><a href="https://skincare.by/product-category/demakiyazh/">Демакияж</a></li><li><a href="https://skincare.by/product-category/ochishhenie/">Очищение</a></li><li><a href="https://skincare.by/product-category/glubokoe-ochishhenie/">Глубокое очищение</a></li><li><a href="https://skincare.by/product-category/tonizacziya/">Тонизация</a></li><li><a href="https://skincare.by/product-category/syvorotki-i-konczentraty/">Сыворотки и концентраты</a></li><li><a href="https://skincare.by/product-category/uhod-za-kozhej-vokrug-glaz/">Уход за кожей вокруг глаз</a></li><li><a href="https://skincare.by/product-category/sredstva-dlya-uhoda-za-kozhej-licza/">Средства для ухода за кожей лица</a></li><li><a href="https://skincare.by/product-category/sredstva-s-spf/">Средства с SPF</a></li><li><a href="https://skincare.by/product-category/maski/">Маски</a></li><li><a href="https://skincare.by/product-category/balzamy-dlya-gub/">Бальзамы для губ</a></li><li><a href="https://skincare.by/product-category/uhod-za-telom/">Уход за телом</a></li><li><a href="https://skincare.by/product-category/akcziya/">Акция</a></li><li><a href="https://skincare.by/product-category/mini-versii/">Мини версии</a></li><li><a href="https://skincare.by/product-category/vitamin-c/">Витамин C</a></li><li><a href="https://skincare.by/product-category/gotovye-nabory/">Готовые наборы</a></li></ul></li><li><a href="https://skincare.by/obo-mne/">Обо мне</a></li><li class="has-sub"><a href="#">Инфо<i></i></a><ul class="sub"><li><a href="https://skincare.by/dostavka/">Доставка</a></li><li><a href="https://skincare.by/oplata/">Оплата</a></li><li><a href="https://skincare.by/vozvrat/">Возврат</a></li><li><a href="https://skincare.by/blog/">Блог</a></li><li><a href="https://skincare.by/otzyvy/">Отзывы</a></li></ul></li><li><a href="https://skincare.by/faq/">FAQ</a></li><li><a href="https://skincare.by/kontakty/">Контакты</a></li></ul>
+  <div class="tools">
+    <a class="opt" href="https://skincare.by/lichnyj-kabinet/" aria-label="Личный кабинет"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></a>
+    <button aria-label="Поиск"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+    <a href="https://skincare.by/izbrannoye/" aria-label="Избранное"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10Z"/></svg><b>0</b></a>
+    <a href="https://skincare.by/oformlenie-zakaza/" aria-label="Корзина"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><b>0</b></a>
+    <button class="burger" aria-label="Меню" data-menu><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.500" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+  </div>
+</header>
+
+<div class="hero" id="hero">
+  <iframe src="assets/charmeuse.html" title="" aria-hidden="true" tabindex="-1" id="fx"></iframe>
+  <div class="h-top fade">
+    <span class="who caps">Ирина · практикующий косметик-эстетист</span>
+    <div class="c"><a href="tel:+375297178135"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.600" aria-hidden="true"><path d="M5 3h4l2 5-2.500 1.500a12 12 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>+375297178135</a><a href="mailto:grubnikovairina1984@gmail.com"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.600" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></svg>grubnikovairina1984@gmail.com</a><a href="https://www.instagram.com/kosmetolog_irina_vtb/"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.600" aria-hidden="true"><rect x="3.500" y="3.500" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.200" cy="6.800" r=".8" fill="currentColor"/></svg>Instagram</a><a href="https://t.me/grubnikovairina"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21.500 3.600 2.900 10.800c-.9.400-.9 1.600.1 1.900l4.600 1.500 1.800 5.500c.2.700 1.100.900 1.600.4l2.600-2.500 4.700 3.500c.6.400 1.400.1 1.600-.6L23 4.800c.2-.9-.7-1.600-1.500-1.200ZM9.800 14.300l8-6.300-6.300 7.400-.3 3.100-1.400-4.200Z"/></svg>Telegram</a></div>
+  </div>
+  <div class="h-mid">
+    <div>
+      <h1><span class="l"><span>Добро пожаловать</span></span><span class="l"><span>в мир осознанного</span></span><span class="l"><span>ухода за кожей!</span></span></h1>
+      <p class="lead fade d1">Меня зовут Ирина, я практикующий косметик-эстетист, и этот интернет-магазин вырос из моей многолетней любви к косметологии и желания помочь каждой женщине обрести уверенность в своей красоте.</p>
+      <div class="ctas fade d2"><a class="btn light" href="https://t.me/grubnikovairina" data-cur data-mag>Записаться на консультацию<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a><a class="btn line" href="https://skincare.by/katalog/" data-cur data-mag>Перейти в каталог</a></div>
+    </div>
+    <div class="lens" id="lens"><div class="in"><img id="lensImg" src="https://skincare.by/wp-content/uploads/2026/04/image3.jpg" alt="Ирина, косметик-эстетист" fetchpriority="high"></div><span class="tag caps fade d4">Витебск · онлайн и оффлайн</span></div>
+  </div>
+  <div class="strip fade d3"><strong>Бесплатная консультация при покупке от 250 BYN</strong><span>Профессиональная косметика, созданная для вас</span><a class="caps" href="https://skincare.by/katalog/" data-cur>Каталог<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></div>
+</div>
+
+<section class="say px" id="say">
+  <h2><span class="w">Ваша</span> <span class="w">кожа</span> <span class="cap"><img src="https://skincare.by/wp-content/uploads/2026/04/img_6403-e1778000879246.jpg" alt="" loading="lazy"></span> <span class="w">заслуживает</span> <span class="w">лучшего</span> <span class="w">ухода.</span> <span class="cap b"><img src="https://skincare.by/wp-content/uploads/2026/04/img_6280-e1778000857952.jpg" alt="" loading="lazy"></span> <span class="w">Выберите</span> <span class="w">его.</span></h2>
+  <a class="btn" href="https://skincare.by/katalog/" data-cur data-mag>Перейти в каталог<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+</section>
+
+<section style="padding-top:0"><div class="px">
+  <div class="sh rv"><h2>Сотрудничаю <em>с брендами</em></h2><span class="caps">13 брендов</span></div>
+  <div class="hive rv">
+    <a href="https://skincare.by/brand/jean-darcel/" style="--i:0" data-cur><img style="--k:1.02;--x:-49.7%;--y:-50%" src="https://skincare.by/wp-content/uploads/2026/05/img_4717-300x300.png" alt="Jean D'Arcel" loading="lazy"></a>
+    <a href="https://skincare.by/brand/jw-pro/" style="--i:1" data-cur><img style="--k:0.88;--x:-49.8%;--y:-50%" src="https://skincare.by/wp-content/uploads/2026/03/img_4729.jpg" alt="JW PRO" loading="lazy"></a>
+    <a href="https://skincare.by/brand/medicare/" style="--i:2" data-cur><img style="--k:1.2;--x:-49.8%;--y:-50%" src="https://skincare.by/wp-content/uploads/2026/05/img_4719-300x300.jpg" alt="Medicare" loading="lazy"></a>
+    <a href="https://skincare.by/brand/phformula/" style="--i:3" data-cur><img style="--k:1.1;--x:-49.8%;--y:-50%" src="https://skincare.by/wp-content/uploads/2026/03/img_4709-300x300.png" alt="pHformula" loading="lazy"></a>
+    <a href="https://skincare.by/brand/skinosophy/" style="--i:4" data-cur><img style="--k:1.25;--x:-49.8%;--y:-49.8%" src="https://skincare.by/wp-content/uploads/2026/05/img_4715-300x300.jpg" alt="skinosophy" loading="lazy"></a>
+    <a href="https://skincare.by/brand/cantabria-labs/" style="--i:5" data-cur><img style="--k:1.16;--x:-49.7%;--y:-46.7%" src="https://skincare.by/wp-content/uploads/2026/03/img_4708-300x300.png" alt="Cantabria Labs" loading="lazy"></a>
+    <a href="https://skincare.by/brand/dermatime/" style="--i:6" data-cur><img style="--k:1.06;--x:-49.8%;--y:-49.8%" src="https://skincare.by/wp-content/uploads/2026/03/img_4718-300x300.jpg" alt="Dermatime" loading="lazy"></a>
+    <a href="https://skincare.by/brand/diego-dalla-palma/" style="--i:7" data-cur><img style="--k:1.11;--x:-49.3%;--y:-50%" src="https://skincare.by/wp-content/uploads/2026/05/img_4716-300x300.jpg" alt="Diego dalla Palma" loading="lazy"></a>
+    <a href="https://skincare.by/brand/founder/" style="--i:8" data-cur><img style="--k:1.02;--x:-49.5%;--y:-49.5%" src="https://skincare.by/wp-content/uploads/2026/05/founder-logo-300x300.png" alt="Founder" loading="lazy"></a>
+    <a href="https://skincare.by/brand/gecko/" style="--i:9" data-cur><img style="--k:0.69;--x:-49.8%;--y:-51.300000000000004%" src="https://skincare.by/wp-content/uploads/2026/03/img_4726-300x300.png" alt="Gecko" loading="lazy"></a>
+    <a href="https://skincare.by/brand/gerards/" style="--i:10" data-cur><img style="--k:0.75;--x:-49.8%;--y:-49.6%" src="https://skincare.by/wp-content/uploads/2026/03/img_4711.png" alt="Gerard's" loading="lazy"></a>
+    <a href="https://skincare.by/brand/germaine-de-capuccini/" style="--i:11" data-cur><img style="--k:0.58;--x:-49.1%;--y:-49.3%" src="https://skincare.by/wp-content/uploads/2026/03/germaine-de-cap.png" alt="Germaine de Capuccini" loading="lazy"></a>
+    <a href="https://skincare.by/brand/heliocare/" style="--i:12" data-cur><img style="--k:0.98;--x:-50%;--y:-49.7%" src="https://skincare.by/wp-content/uploads/2026/05/img_4714-300x300.png" alt="Heliocare" loading="lazy"></a>
+  </div>
+</div></section>
+
+<section style="padding-top:0"><div class="px">
+  <div class="sh rv"><h2>Категории</h2><span class="caps">8 направлений ухода</span></div>
+  <div class="acc rv" id="acc">
+    <a class="ap on" href="https://skincare.by/product-category/sredstva-s-spf/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_6280-e1778000857952.jpg" alt="" loading="lazy"><span class="n">01</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>SPF- защита</h3><p></p></div></a>
+    <a class="ap" href="https://skincare.by/product-category/vitamin-c/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_6403-e1778000879246.jpg" alt="" loading="lazy"><span class="n">02</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Витамин C</h3><p></p></div></a>
+    <a class="ap" href="https://skincare.by/sostoyanie-kozhi/antiejdzh/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_6249-e1778000899501.jpg" alt="" loading="lazy"><span class="n">03</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Анти-эйдж</h3><p></p></div></a>
+    <a class="ap" href="https://skincare.by/product-category/gotovye-nabory/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_6245-e1778000926788.jpg" alt="" loading="lazy"><span class="n">04</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Готовые наборы</h3><p></p></div></a>
+    <a class="ap" href="https://skincare.by/sostoyanie-kozhi/problemnaya/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_7332-e1778000943585.jpg" alt="" loading="lazy"><span class="n">05</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Проблемная кожа</h3><p>средства для кожи с высыпаниями и акне</p></div></a>
+    <a class="ap" href="https://skincare.by/sostoyanie-kozhi/suhaya/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_7329-e1778000960629.jpg" alt="" loading="lazy"><span class="n">06</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Сухая кожа</h3><p>средства для сухой кожи лица</p></div></a>
+    <a class="ap" href="https://skincare.by/sostoyanie-kozhi/chuvstvitelnaya/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_73341-e1778000974592.jpg" alt="" loading="lazy"><span class="n">07</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Чувствительная кожа</h3><p>средства для чувствительной кожи лица</p></div></a>
+    <a class="ap" href="https://skincare.by/sostoyanie-kozhi/pigmentacziya/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/04/img_7333.jpg" alt="" loading="lazy"><span class="n">08</span><span class="ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span><div class="ai"><h3>Пигментация</h3><p>средства для коррекции пигментных пятен</p></div></a>
+  </div>
+</div></section>
+
+<section class="new" id="new"><div class="px">
+  <div class="sh rv"><h2>Новинки</h2><a class="caps" href="https://skincare.by/katalog/">Весь каталог <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></div>
+  <div class="pcols">
+    <div class="pcol"><article class="pc"><a class="ph" href="https://skincare.by/product/naturalnyj-gel-dlya-umyvaniya-50-ml-natural-cleansing-gel-skinosophy/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/05/6___1__7-300x300.jpg" alt="Натуральный гель для умывания 50 мл Natural Cleansing Gel Skinosophy" loading="lazy"></a><h3><a href="https://skincare.by/product/naturalnyj-gel-dlya-umyvaniya-50-ml-natural-cleansing-gel-skinosophy/">Натуральный гель для умывания 50 мл Natural Cleansing Gel Skinosophy</a></h3><div class="pf"><span class="pr">40,00 Br</span><a class="go" href="https://skincare.by/product/naturalnyj-gel-dlya-umyvaniya-50-ml-natural-cleansing-gel-skinosophy/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article><article class="pc"><a class="ph" href="https://skincare.by/product/radiant-glow-cc-cream-spf-30-50-ml-founder-cosmetics/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/06/medium_ss_cream_spf_30_444355a98d-300x300.png" alt="Radiant Glow CC cream spf 30 (50 мл) Founder Cosmetics" loading="lazy"></a><h3><a href="https://skincare.by/product/radiant-glow-cc-cream-spf-30-50-ml-founder-cosmetics/">Radiant Glow CC cream spf 30 (50 мл) Founder Cosmetics</a></h3><div class="pf"><span class="pr">160,00 Br</span><a class="go" href="https://skincare.by/product/radiant-glow-cc-cream-spf-30-50-ml-founder-cosmetics/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article></div>
+    <div class="pcol"><article class="pc"><a class="ph" href="https://skincare.by/product/phformula-c-r-active-recovery-aktivnaya-vosstanavlivayushhaya-syvorotka-dlya-chuvstvitelnoj-kozhi-15ml/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/05/action_4504861-300x300.png" alt="pHFormula C.R. Active Recovery Активная восстанавливающая сыворотка для чувствительной кожи, 15ml" loading="lazy"></a><h3><a href="https://skincare.by/product/phformula-c-r-active-recovery-aktivnaya-vosstanavlivayushhaya-syvorotka-dlya-chuvstvitelnoj-kozhi-15ml/">pHFormula C.R. Active Recovery Активная восстанавливающая сыворотка для чувствительной кожи, 15ml</a></h3><div class="pf"><span class="pr ask">Цену уточняйте</span><a class="go" href="https://skincare.by/product/phformula-c-r-active-recovery-aktivnaya-vosstanavlivayushhaya-syvorotka-dlya-chuvstvitelnoj-kozhi-15ml/"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg><span>Подробнее</span></a></div></article><article class="pc"><a class="ph" href="https://skincare.by/product/deep-cleansing-foaming-gel-gel-to-foam-gel-dlya-glubokogo-ochishheniya-150-ml/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/06/29f0091-the-cleansing-expert-deep-cleansing-foaming-gel_white-bkgnd-300x300.jpg" alt="Deep Cleansing Foaming Gel Gel-to-Foam Гель для глубокого очищения 150 ml" loading="lazy"></a><h3><a href="https://skincare.by/product/deep-cleansing-foaming-gel-gel-to-foam-gel-dlya-glubokogo-ochishheniya-150-ml/">Deep Cleansing Foaming Gel Gel-to-Foam Гель для глубокого очищения 150 ml</a></h3><div class="pf"><span class="pr ask">Цену уточняйте</span><a class="go" href="https://skincare.by/product/deep-cleansing-foaming-gel-gel-to-foam-gel-dlya-glubokogo-ochishheniya-150-ml/"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg><span>Подробнее</span></a></div></article></div>
+    <div class="pcol"><article class="pc"><a class="ph" href="https://skincare.by/product/jw-pro-velvet-powder-ligh-zashhitnaya-pudra-ton-svetlyj-16g/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/05/1111-300x300.webp" alt="JW pro Velvet Powder LIGHT Защитная пудра (тон светлый), 16g" loading="lazy"></a><h3><a href="https://skincare.by/product/jw-pro-velvet-powder-ligh-zashhitnaya-pudra-ton-svetlyj-16g/">JW pro Velvet Powder LIGHT Защитная пудра (тон светлый), 16g</a></h3><div class="pf"><span class="pr">180,00 Br</span><a class="go" href="https://skincare.by/product/jw-pro-velvet-powder-ligh-zashhitnaya-pudra-ton-svetlyj-16g/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article><article class="pc"><a class="ph" href="https://skincare.by/product/comforting-hydrating-toner-%c2%a0-loson-uvlazhnyayushhij-200ml/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/06/29f0111-the-cleansing-expert-comforting-hydrating-toner_white-bkgnd-300x300.jpg" alt="Comforting Hydrating Toner Лосьон увлажняющий 200 ml" loading="lazy"></a><h3><a href="https://skincare.by/product/comforting-hydrating-toner-%c2%a0-loson-uvlazhnyayushhij-200ml/">Comforting Hydrating Toner Лосьон увлажняющий 200 ml</a></h3><div class="pf"><span class="pr ask">Цену уточняйте</span><a class="go" href="https://skincare.by/product/comforting-hydrating-toner-%c2%a0-loson-uvlazhnyayushhij-200ml/"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg><span>Подробнее</span></a></div></article></div>
+    <div class="pcol"><article class="pc"><a class="ph" href="https://skincare.by/product/sebocomfort-cream-jw-pro-krem-dlya-kombinirovannoj-i-zhirnoj-kozhi-50-ml/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/07/2026-07-07-12.05.33-300x300.jpg" alt="JW PRO Sebocomfort Cream Крем для комбинированной и жирной кожи, 50 мл" loading="lazy"></a><h3><a href="https://skincare.by/product/sebocomfort-cream-jw-pro-krem-dlya-kombinirovannoj-i-zhirnoj-kozhi-50-ml/">JW PRO Sebocomfort Cream Крем для комбинированной и жирной кожи, 50 мл</a></h3><div class="pf"><span class="pr">145,00 Br</span><a class="go" href="https://skincare.by/product/sebocomfort-cream-jw-pro-krem-dlya-kombinirovannoj-i-zhirnoj-kozhi-50-ml/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article><article class="pc"><a class="ph" href="https://skincare.by/product/gec/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/06/2026-06-03-18.52.16-300x300.jpg" alt="Gecko SPF 50+ Солнцезащитный крем Sun Protect, 50 мл" loading="lazy"></a><h3><a href="https://skincare.by/product/gec/">Gecko SPF 50+ Солнцезащитный крем Sun Protect, 50 мл</a></h3><div class="pf"><span class="pr ask">Цену уточняйте</span><a class="go" href="https://skincare.by/product/gec/"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg><span>Подробнее</span></a></div></article></div>
+    <div class="pcol"><article class="pc"><a class="ph" href="https://skincare.by/product/jw-pro-longevity-peptide-serum-peptidnaya-syvorotka-30-ml/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/07/2026-07-07-12.06.54-300x300.jpg" alt="JW Pro Longevity Peptide Serum Пептидная сыворотка, 30 мл" loading="lazy"></a><h3><a href="https://skincare.by/product/jw-pro-longevity-peptide-serum-peptidnaya-syvorotka-30-ml/">JW Pro Longevity Peptide Serum Пептидная сыворотка, 30 мл</a></h3><div class="pf"><span class="pr">187,00 Br</span><a class="go" href="https://skincare.by/product/jw-pro-longevity-peptide-serum-peptidnaya-syvorotka-30-ml/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article><article class="pc"><a class="ph" href="https://skincare.by/product/gerards-caviar-mask-mashera-gel-viso-ristrutturante-ad-effetto-sculp-100ml-2/" data-cur><img src="https://skincare.by/wp-content/uploads/2026/05/4-1-300x300.webp" alt="GERARD’S Caviar Mask Mashera Gel Viso Ristrutturante ad Effetto Sculp, 100ml" loading="lazy"></a><h3><a href="https://skincare.by/product/gerards-caviar-mask-mashera-gel-viso-ristrutturante-ad-effetto-sculp-100ml-2/">GERARD’S Caviar Mask Mashera Gel Viso Ristrutturante ad Effetto Sculp, 100ml</a></h3><div class="pf"><span class="pr">147,00 Br</span><a class="go" href="https://skincare.by/product/gerards-caviar-mask-mashera-gel-viso-ristrutturante-ad-effetto-sculp-100ml-2/"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>В корзину</span></a></div></article></div>
+  </div>
+</div></section>
+
+<section><div class="px stack" id="stack">
+  <a class="sc" href="https://t.me/grubnikovairina" data-cur><div class="tx"><span class="caps">01 / 02</span><h3>Консультация косметолога онлайн, оффлайн</h3><span class="btn light">Записаться<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span></div><div class="im"><img src="https://skincare.by/wp-content/uploads/2026/04/image18.jpg" alt="" loading="lazy"></div></a>
+  <a class="sc" href="https://skincare.by/katalog/" data-cur><div class="tx"><span class="caps">02 / 02</span><h3>Подбор ухода</h3><span class="btn">Каталог<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span></div><div class="im"><img src="https://skincare.by/wp-content/uploads/2026/04/image4.jpg" alt="" loading="lazy"></div></a>
+</div></section>
+
+<section style="padding-top:0">
+  <div class="sh px rv"><h2>Полезные <em>статьи</em></h2><div class="nav2"><button aria-label="Назад" data-jr="-1"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 12H4m6 6-6-6 6-6"/></svg></button><button aria-label="Вперёд" data-jr="1"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button></div></div>
+  <div class="jr rv" id="jr">
+    <a class="jp" href="https://skincare.by/pochemu-vitamin-s-eto-horosho-dlya-vashej-kozhi/" draggable="false"><div class="ph"><img src="https://skincare.by/wp-content/uploads/2018/05/img_05161-720x484.jpg" alt="" loading="lazy" draggable="false"></div><time class="caps">Май 30, 2018</time><h3>Почему витамин С – это хорошо для вашей кожи?</h3><p>Если вы имеете дело с мимическими морщинами, пигментными пятнами и сухой кожей, которые могут...</p></a>
+    <a class="jp" href="https://skincare.by/pamyatka-po-ispolzovaniyu-spf-zashhity-ot-solncza/" draggable="false"><div class="ph"><img src="https://skincare.by/wp-content/uploads/2018/05/img_6283-720x484.jpg" alt="" loading="lazy" draggable="false"></div><time class="caps">Май 30, 2018</time><h3>Памятка по использованию SPF – защиты от солнца</h3><p>Выбирайте солнцезащитный крем широкого спектра, который будет защищать от UVA и UVB лучей. На...</p></a>
+    <a class="jp" href="https://skincare.by/syvorotki-dlya-licza-kogda-i-zachem-oni-nuzhny/" draggable="false"><div class="ph"><img src="https://skincare.by/wp-content/uploads/2018/05/4093-720x484.jpg" alt="" loading="lazy" draggable="false"></div><time class="caps">Май 30, 2018</time><h3>Сыворотки для лица – когда и зачем они нужны?</h3><p>Меня часто спрашивают: «Зачем нужны сыворотки, если есть крем?» и «Нужны ли они...</p></a>
+    <a class="jp" href="https://skincare.by/ispolzovanie-retinola-pamyatka/" draggable="false"><div class="ph"><img src="https://skincare.by/wp-content/uploads/2026/04/1000004747-720x442.jpg" alt="" loading="lazy" draggable="false"></div><time class="caps">Апр 14, 2026</time><h3>Использование ретинола. Памятка</h3><p>Ввели ретинол, кислоты и кожа стала хуже. Появились новые морщинки, сухость и стянутость, а...</p></a>
+    <a class="jp" href="https://skincare.by/pochemu-domashnij-uhod-ne-pomogaet/" draggable="false"><div class="ph"><img src="https://skincare.by/wp-content/uploads/2026/04/1000004746-720x442.jpg" alt="" loading="lazy" draggable="false"></div><time class="caps">Апр 14, 2026</time><h3>Почему домашний уход не помогает?</h3><p>«Чтобы увидеть эффект от домашнего ухода, нужно выбрать ретинол, пептиды и кислоты». Они...</p></a>
+  </div>
+</section>
+
+<footer><div class="px">
+  <div class="ftop">
+    <div><span class="caps">Контакты</span><a class="tel" href="tel:+375297178135" data-cur>+375 29 717-81-35</a></div>
+    <ul><li class="soc"><a href="https://www.instagram.com/kosmetolog_irina_vtb/" aria-label="Instagram"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.600" aria-hidden="true"><rect x="3.500" y="3.500" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.200" cy="6.800" r=".8" fill="currentColor"/></svg></a><a href="https://t.me/grubnikovairina" aria-label="Telegram"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21.500 3.600 2.900 10.800c-.9.400-.9 1.600.1 1.900l4.600 1.500 1.800 5.500c.2.700 1.100.900 1.600.4l2.600-2.500 4.700 3.500c.6.400 1.400.1 1.600-.6L23 4.800c.2-.9-.7-1.600-1.500-1.200ZM9.800 14.300l8-6.300-6.300 7.400-.3 3.100-1.400-4.200Z"/></svg></a></li><li><a href="mailto:grubnikovairina1984@gmail.com">grubnikovairina1984@gmail.com</a></li><li>Витебск, улица Шаврова дом 34</li></ul>
+  </div>
+  <div class="fg">
+    <div><p>ИП Грубникова Ирина Владимировна</p><p>УНП 392026839</p><p>220016, Республика Беларусь, г. Витебск, улица Шаврова, дом 34</p><p>Свидетельство о государственной регистрации №0907091, выдано Администрацией Октябрьского района г. Витебска 30 января 2026 г.</p><p>Интернет-магазин включен в Торговый реестр Республики Беларусь 22.05.2026 за № 777967</p></div>
+    <div><h4 class="caps">Главная</h4><ul><li><a href="https://skincare.by/obo-mne/">Обо мне</a></li><li><a href="https://skincare.by/faq/">FAQ</a></li><li><a href="https://skincare.by/blog/">Блог</a></li><li><a href="https://skincare.by/dostavka/">Доставка</a></li><li><a href="https://skincare.by/oplata/">Оплата</a></li><li><a href="https://skincare.by/vozvrat/">Возврат</a></li><li><a href="#">Политика конфиденциальности</a></li><li><a href="#">Политика обработки файлов cookie</a></li><li><a href="#">Публичная оферта</a></li></ul></div>
+    <div><h4 class="caps">Каталог</h4><ul class="two"><li><a href="https://skincare.by/product-category/demakiyazh/">Демакияж</a></li><li><a href="https://skincare.by/product-category/ochishhenie/">Очищение</a></li><li><a href="https://skincare.by/product-category/glubokoe-ochishhenie/">Глубокое очищение</a></li><li><a href="https://skincare.by/product-category/tonizacziya/">Тонизация</a></li><li><a href="https://skincare.by/product-category/syvorotki-i-konczentraty/">Сыворотки и концентраты</a></li><li><a href="https://skincare.by/product-category/uhod-za-kozhej-vokrug-glaz/">Уход за кожей вокруг глаз</a></li><li><a href="https://skincare.by/product-category/sredstva-dlya-uhoda-za-kozhej-licza/">Средства для ухода за кожей лица</a></li><li><a href="https://skincare.by/product-category/sredstva-s-spf/">Средства с SPF</a></li><li><a href="https://skincare.by/product-category/maski/">Маски</a></li><li><a href="https://skincare.by/product-category/balzamy-dlya-gub/">Бальзамы для губ</a></li><li><a href="https://skincare.by/product-category/uhod-za-telom/">Уход за телом</a></li><li><a href="https://skincare.by/product-category/akcziya/">Акция</a></li><li><a href="https://skincare.by/product-category/mini-versii/">Мини версии</a></li></ul></div>
+  </div>
+  <div class="fbot">
+    <div class="pay"><img src="https://skincare.by/wp-content/uploads/2026/05/hutki-grosh.svg" alt="Хуткi Грош"><img src="https://skincare.by/wp-content/uploads/2026/05/epip.svg" alt="ЕРИП"><img class="strip2" src="https://skincare.by/wp-content/uploads/2020/01/logoirina-scaled-1.png" alt="Способы оплаты"></div>
+    <div class="dev">Разработка и продвижение<img src="https://skincare.by/wp-content/uploads/2026/03/pirus-wh.png" alt="Pirus"></div>
+  </div>
+</div></footer>
+
+<nav class="sw" aria-label="Варианты редизайна"><a href="v1.html">Вариант 1</a><a href="v2.html">Вариант 2</a><a href="wow.html">WOW</a><a href="wow2.html" class="on">WOW 2</a><a href="index.html">Все</a></nav>
+<style>.sw{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9999;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(20,22,18,.86);backdrop-filter:blur(10px);font:500 12px/1 Manrope,system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25)}.sw a{padding:9px 14px;border-radius:999px;text-decoration:none;white-space:nowrap;color:#f4efe6}.sw a.on{background:#f4efe6;color:#1c1d1a}</style>
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var $=function(s){return document.querySelector(s)}, $$=function(s){return [].slice.call(document.querySelectorAll(s))};
+  var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+
+  /* лоадер: минимум 1.3 с, потолок 3 с; контент стартует вместе с раскрытием занавеса */
+  var t0=performance.now(), done=false, fx=$('#fx');
+  function open(){ if(done) return; done=true; var wait=Math.max(0,1300-(performance.now()-t0));
+    setTimeout(function(){document.body.classList.add('ready'); setTimeout(function(){document.body.classList.remove('lock')},1100)},reduce?0:wait) }
+  fx.addEventListener('load',open); setTimeout(open,3000);
+
+  /* ткань лежит под контентом, поэтому движение мыши пробрасываем в iframe вручную */
+  var hero=$('#hero');
+  hero.addEventListener('pointermove',function(e){
+    try{ var r=fx.getBoundingClientRect(), w=fx.contentWindow;
+      w.dispatchEvent(new w.PointerEvent('pointermove',{clientX:e.clientX-r.left,clientY:e.clientY-r.top})) }catch(_){}
+  },{passive:true});
+
+  $('[data-menu]').addEventListener('click',function(){$('#menu').classList.toggle('open');hdr.classList.add('solid')});
+
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+  $$('.rv').forEach(function(el){io.observe(el)});
+
+  /* гармошка категорий: раскрыта та панель, на которую навели или перешли с клавиатуры */
+  var aps=$$('.ap');
+  aps.forEach(function(a){['pointerenter','focus'].forEach(function(ev){a.addEventListener(ev,function(){aps.forEach(function(b){b.classList.toggle('on',b===a)})})})});
+
+  /* магнитные кнопки */
+  if(fine&&!reduce) $$('[data-mag]').forEach(function(b){
+    b.addEventListener('pointermove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.22)+'px,'+((e.clientY-r.top-r.height/2)*.3)+'px)'});
+    b.addEventListener('pointerleave',function(){b.style.transition='transform .8s cubic-bezier(.16,1,.3,1),color .45s';b.style.transform='';setTimeout(function(){b.style.transition=''},800)});
+  });
+
+  /* лента статей: тянем мышью, стрелки листают на карточку */
+  var jr=$('#jr'), down=false, moved=false, sx=0, sl=0;
+  jr.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;down=true;moved=false;sx=e.clientX;sl=jr.scrollLeft});
+  addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-sx;if(Math.abs(dx)>6){moved=true;jr.classList.add('drag')}if(moved)jr.scrollLeft=sl-dx});
+  addEventListener('pointerup',function(){down=false;setTimeout(function(){jr.classList.remove('drag')},0)});
+  jr.addEventListener('click',function(e){if(moved){e.preventDefault();moved=false}},true);
+  jr.addEventListener('dragstart',function(e){e.preventDefault()});
+  $$('[data-jr]').forEach(function(b){b.addEventListener('click',function(){jr.scrollBy({left:+b.dataset.jr*(jr.firstElementChild.offsetWidth+22),behavior:reduce?'auto':'smooth'})})});
+
+  /* общий кадр: курсор, портрет, скролл-эффекты – один rAF, всё через lerp */
+  var mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my,lx=0,ly=0,cur=$('#cur'),hdr=$('#hdr'),lensImg=$('#lensImg'),lens=$('#lens');
+  var say=$('#say'),sayW=$$('#say .w'),pcols=$$('.pcol'),news=$('#new'),cards=$$('.sc'),lastY=0,sp=0;
+  addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY;if(fine)cur.style.opacity=1},{passive:true});
+  $$('[data-cur]').forEach(function(el){el.addEventListener('pointerenter',function(){cur.classList.add('big')});el.addEventListener('pointerleave',function(){cur.classList.remove('big')})});
+
+  function frame(){
+    var y=scrollY, vh=innerHeight, wide=innerWidth>860;
+    cx+=(mx-cx)*.22; cy+=(my-cy)*.22; cur.style.transform='translate3d('+cx+'px,'+cy+'px,0)';
+    if(!reduce){
+      /* портрет: фото внутри капсулы плывёт за курсором, сама капсула уезжает медленнее страницы */
+      lx+=((fine?(mx/innerWidth-.5)*-26:0)-lx)*.06; ly+=((fine?(my/vh-.5)*-20:0)-ly)*.06;
+      lensImg.style.transform='translate3d('+lx+'px,'+ly+'px,0)';
+      lens.style.transform=wide?'translate3d(0,'+(y*.14)+'px,0)':'';
+    }
+    /* фраза: капсулы-картинки вырастают, слова темнеют */
+    var r=say.getBoundingClientRect(), t=clamp((vh*.92-r.top)/(vh*.62),0,1); sp+=(t-sp)*.12;
+    say.style.setProperty('--p',reduce?1:sp.toFixed(3));
+    var n=Math.round(clamp(sp*1.15,0,1)*sayW.length); sayW.forEach(function(w,i){w.classList.toggle('on',reduce||i<n)});
+    /* новинки: чётные колонки догоняют остальные */
+    if(wide&&!reduce){ var nr=news.getBoundingClientRect(), np=clamp((vh-nr.top)/(vh*.5+nr.height*.6),0,1);
+      pcols.forEach(function(c,i){c.style.transform=i%2?'translate3d(0,'+(-90*np)+'px,0)':''}) } else pcols.forEach(function(c){c.style.transform=''});
+    /* стопка: первая карточка слегка уменьшается, когда на неё наезжает вторая */
+    if(wide&&!reduce&&cards.length>1){ var a=cards[0].getBoundingClientRect(), b=cards[1].getBoundingClientRect(), k=clamp(1-(b.top-a.top-24)/a.height,0,1);
+      cards[0].style.transform='scale('+(1-k*.06)+')'; cards[0].style.filter='brightness('+(1-k*.35)+')' }
+    /* шапка: белая плашка после первого экрана, прячется при прокрутке вниз */
+    var open=$('#menu').classList.contains('open');
+    hdr.classList.toggle('solid',open||y>hero.offsetHeight-90);
+    if(Math.abs(y-lastY)>6){hdr.classList.toggle('hide',y>lastY&&y>vh*.6&&!open);lastY=y}
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
